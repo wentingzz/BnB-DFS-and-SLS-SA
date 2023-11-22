@@ -58,3 +58,27 @@ def sls_with_sa(distance_matrix, max_iterations, initial_temperature = 10, tempe
             current_solution = neighbor_solution
             current_energy = neighbor_energy
     return (current_solution, current_energy)
+
+# Press the green button in the gutter to run the script.
+if __name__ == '__main__':
+    # file = input("Enter the TSP distance file: ")
+    # max_iteration = int(input("Enter the number of maximal iterations: "))
+    # init_tmp = int(input("Enter initial temperature: "))
+    file = "../data/150_100.0_10.0.out"
+    max_iteration = 100000
+    initial_temperature = 10
+    temperature_type = 'exp'
+    alpha = 0.1
+    distance = read_distance_matrix(file)
+
+
+
+    start_time = time.time()
+    sol, cost = sls_with_sa(distance, max_iteration, initial_temperature, temperature_type, alpha)
+    end_time = time.time()
+    print(sol)
+    # Calculate and print the runtime
+    runtime = end_time - start_time
+    print("Runtime:", round(runtime,4), "seconds")
+    print(cost)
+
