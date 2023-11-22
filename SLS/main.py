@@ -10,3 +10,24 @@ def calculate_total_distance(solution, distance_matrix):
     for i in range(len(solution) - 1):
         total_distance += distance_matrix[solution[i], solution[i + 1]]
     return total_distance
+def random_solution(n):
+    return np.random.permutation(n)
+
+def generate_neighbor_solution(solution, cost, distance):
+    neighbor_solution = solution.copy()
+    idx1, idx2 = np.random.choice(len(solution), size=2, replace=False)
+    neighbor_solution[idx1], neighbor_solution[idx2] = neighbor_solution[idx2], neighbor_solution[idx1]
+
+    # Compute the change in cost due to the swap
+    old_cost_idx1 = distance[solution[idx1 - 1]][solution[idx1]] + distance[solution[idx1]][solution[(idx1 + 1) % len(solution)]]
+    old_cost_idx2 = distance[solution[idx2 - 1]][solution[idx2]] + distance[solution[idx2]][solution[(idx2 + 1) % len(solution)]]
+
+    new_cost_idx1 = distance[neighbor_solution[idx1 - 1]][neighbor_solution[idx1]] + distance[neighbor_solution[idx1]][neighbor_solution[(idx1 + 1) % len(solution)]]
+    new_cost_idx2 = distance[neighbor_solution[idx2 - 1]][neighbor_solution[idx2]] + distance[neighbor_solution[idx2]][neighbor_solution[(idx2 + 1) % len(solution)]]
+
+    # Update the cost based on the changes
+    new_cost = cost - old_cost_idx1 - old_cost_idx2 + new_cost_idx1 + new_cost_idx2
+    # print(new_cost)
+    # print(calculate_total_distance(neighbor_solution, distance))
+    return (neighbor_solution, round(new_cost,4))
+
