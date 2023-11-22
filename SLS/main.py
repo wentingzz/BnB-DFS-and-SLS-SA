@@ -31,3 +31,30 @@ def generate_neighbor_solution(solution, cost, distance):
     # print(calculate_total_distance(neighbor_solution, distance))
     return (neighbor_solution, round(new_cost,4))
 
+
+def sls_with_sa(distance_matrix, max_iterations, initial_temperature = 10, temperature_type='linear', alpha=0.1):
+    current_solution = random_solution(len(distance_matrix))
+    current_energy = calculate_total_distance(current_solution, distance_matrix)
+
+    if temperature_type == 'exp':
+        temperature_schedule = lambda t: initial_temperature * np.exp(-alpha * t)
+    elif temperature_type == 'linear':
+        temperature_schedule = lambda t: initial_temperature - alpha * t
+    else:
+        raise ValueError("Invalid temperature_type. Use 'exp' or 'linear'.")
+
+    for t in range(1, max_iterations + 1):
+        temperature = temperature_schedule(t)
+        # print(temperature)
+        if temperature <= 0:
+            print("Current iteration = ", t)
+            return (current_solution, current_energy)
+
+        (neighbor_solution, neighbor_energy) = generate_neighbor_solution(current_solution, current_energy, distance_matrix)
+
+        energy_difference = neighbor_energy - current_energy
+
+        if energy_difference < 0 or np.random.rand() < np.exp(-energy_difference / temperature):
+            current_solution = neighbor_solution
+            current_energy = neighbor_energy
+    return (current_solution, current_energy)
