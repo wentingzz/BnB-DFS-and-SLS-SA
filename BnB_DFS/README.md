@@ -1,7 +1,8 @@
 Required packages:
-numpy
-matplotlib
-time
+
+- numpy
+- matplotlib
+- time
 
 How to run:
 
