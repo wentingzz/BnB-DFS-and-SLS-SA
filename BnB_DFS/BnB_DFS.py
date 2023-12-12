@@ -3,10 +3,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 global source
-source = "../data/10_100.0_10.0.out"
+source = "../data/200_100.0_10.0.out"
 
 global max_full_path
 max_full_path = 1000000
+
+# set ten_min_hard_stop to True if you want a early stop on 10 min
+global ten_min_hard_stop
+ten_min_hard_stop = False
 
 
 def bnb_dfs(graph):
@@ -43,6 +47,7 @@ def bnb_dfs(graph):
         return heuristic_cost
 
     t_start = time.time()
+    break_flag = False
 
     for start in range(N):
         if full_path > max_full_path:
@@ -70,6 +75,10 @@ def bnb_dfs(graph):
             nodes_expanded += 1
             upper_bound.append(best_cost)
 
+            if ten_min_hard_stop and time.time() - t_start >= 600:
+                break_flag = True
+                break
+
             for next_city in range(N):
                 if next_city not in visited and graph[current][next_city] != np.inf:
                     new_visited = visited.copy()
@@ -82,9 +91,14 @@ def bnb_dfs(graph):
                         total_cost_all.append(current_cost + heuristic_cost)
                         stack.append((next_city, path + [next_city], current_cost, new_visited))
 
+        if break_flag:
+            break
+
     # CPU time
     t_stop = time.time()
     runtime = t_stop - t_start
+    if break_flag:
+        runtime = 600
 
     # Plots
     fig, axes = plt.subplots(1, 2, figsize=(25, 8))
